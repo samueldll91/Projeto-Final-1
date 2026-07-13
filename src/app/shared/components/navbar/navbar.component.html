@@ -1,0 +1,70 @@
+<header class="sticky top-0 z-40 bg-bella-bg/95 backdrop-blur border-b border-bella-200">
+  <div class="container-page flex items-center justify-between h-20">
+    <a routerLink="/" class="font-serif text-2xl tracking-wide text-bella-900">Bella Fashion</a>
+
+    <nav class="hidden md:flex items-center gap-8 text-sm tracking-wide">
+      @for (cat of categories; track cat) {
+        <a
+          [routerLink]="['/catalogo']"
+          [queryParams]="{ categoria: cat }"
+          class="text-bella-500 hover:text-bella-900 transition"
+        >{{ cat }}</a>
+      }
+    </nav>
+
+    <div class="flex items-center gap-4">
+      <div class="hidden lg:flex items-center border-b border-bella-200 focus-within:border-bella-900 transition">
+        <input
+          [(ngModel)]="search"
+          (keyup.enter)="onSearch()"
+          type="text"
+          placeholder="Buscar produtos..."
+          class="bg-transparent text-sm px-2 py-1 outline-none w-40"
+        />
+        <button (click)="onSearch()" aria-label="Buscar" class="px-1 text-bella-500 hover:text-bella-900">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+      </div>
+
+      <a routerLink="/carrinho" class="relative text-bella-900" aria-label="Carrinho">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        @if (cart.itemCount() > 0) {
+          <span class="absolute -top-2 -right-2 bg-[var(--clay)] text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+            {{ cart.itemCount() }}
+          </span>
+        }
+      </a>
+
+      @if (auth.isAuthenticated()) {
+        <div class="relative">
+          <button (click)="userMenuOpen = !userMenuOpen" class="text-bella-900" aria-label="Conta">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+          </button>
+          @if (userMenuOpen) {
+            <div class="absolute right-0 mt-2 w-44 bg-white border border-bella-200 shadow-lg rounded-sm py-2 text-sm">
+              <a routerLink="/pedidos" (click)="userMenuOpen = false" class="block px-4 py-2 hover:bg-bella-bg">Meus pedidos</a>
+              @if (auth.isAdmin()) {
+                <a routerLink="/admin" (click)="userMenuOpen = false" class="block px-4 py-2 hover:bg-bella-bg">Painel admin</a>
+              }
+              <button (click)="logout()" class="w-full text-left px-4 py-2 hover:bg-bella-bg text-red-700">Sair</button>
+            </div>
+          }
+        </div>
+      } @else {
+        <a routerLink="/login" class="text-sm tracking-wide text-bella-900 hover:text-[var(--clay-dark)]">Entrar</a>
+      }
+
+      <button (click)="menuOpen = !menuOpen" class="md:hidden text-bella-900" aria-label="Menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+
+  @if (menuOpen) {
+    <nav class="md:hidden border-t border-bella-200 px-6 py-4 flex flex-col gap-3 text-sm">
+      @for (cat of categories; track cat) {
+        <a [routerLink]="['/catalogo']" [queryParams]="{ categoria: cat }" (click)="menuOpen = false" class="text-bella-700">{{ cat }}</a>
+      }
+    </nav>
+  }
+</header>

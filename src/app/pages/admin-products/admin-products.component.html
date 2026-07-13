@@ -1,0 +1,117 @@
+<div class="container-page py-12">
+  <div class="flex items-center justify-between mb-10">
+    <h1 class="font-serif text-4xl text-bella-900">Produtos</h1>
+    <button (click)="openModal()" class="btn-primary">+ Novo produto</button>
+  </div>
+
+  @if (loading()) {
+    <div class="space-y-3">
+      @for (i of [1,2,3,4]; track i) {
+        <div class="h-16 bg-bella-200 animate-pulse"></div>
+      }
+    </div>
+  } @else {
+    <table class="w-full text-sm bg-white border border-bella-200">
+      <thead>
+        <tr class="text-left text-bella-500 border-b border-bella-200">
+          <th class="py-3 px-4 font-normal">Imagem</th>
+          <th class="py-3 px-4 font-normal">Nome</th>
+          <th class="py-3 px-4 font-normal">Categoria</th>
+          <th class="py-3 px-4 font-normal">Preço</th>
+          <th class="py-3 px-4 font-normal">Estoque</th>
+          <th class="py-3 px-4 font-normal text-right">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (product of products(); track product.id) {
+          <tr class="border-b border-bella-200 last:border-0">
+            <td class="py-3 px-4">
+              <div class="w-12 h-14 bg-bella-200 overflow-hidden">
+                @if (product.image_url) {
+                  <img [src]="product.image_url" [alt]="product.name" class="w-full h-full object-cover" />
+                }
+              </div>
+            </td>
+            <td class="py-3 px-4">{{ product.name }}</td>
+            <td class="py-3 px-4">{{ product.category }}</td>
+            <td class="py-3 px-4">{{ product.price | currency:'BRL' }}</td>
+            <td class="py-3 px-4" [class.text-red-700]="product.stock_quantity <= 5">{{ product.stock_quantity }}</td>
+            <td class="py-3 px-4 text-right space-x-3">
+              <button (click)="openModal(product)" class="text-bella-900 hover:underline">Editar</button>
+              <button (click)="delete(product.id!)" class="text-red-700 hover:underline">Excluir</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
+
+@if (modalOpen()) {
+  <div class="fixed inset-0 bg-bella-900/50 z-50 flex items-center justify-center p-4" (click)="closeModal()">
+    <div class="bg-white max-w-lg w-full max-h-[90vh] overflow-y-auto p-8" (click)="$event.stopPropagation()">
+      <h2 class="font-serif text-2xl text-bella-900 mb-6">
+        {{ editingProduct ? 'Editar produto' : 'Novo produto' }}
+      </h2>
+
+      <form [formGroup]="productForm" (ngSubmit)="save()" class="space-y-4">
+        <div>
+          <label class="text-sm text-bella-700 block mb-1">Nome</label>
+          <input formControlName="name" type="text" class="input-field" />
+        </div>
+
+        <div>
+          <label class="text-sm text-bella-700 block mb-1">Descrição</label>
+          <textarea formControlName="description" rows="3" class="input-field"></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm text-bella-700 block mb-1">Preço</label>
+            <input formControlName="price" type="number" step="0.01" class="input-field" />
+          </div>
+          <div>
+            <label class="text-sm text-bella-700 block mb-1">Preço original</label>
+            <input formControlName="original_price" type="number" step="0.01" class="input-field" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm text-bella-700 block mb-1">Categoria</label>
+            <select formControlName="category" class="input-field">
+              @for (cat of categories; track cat) {
+                <option [value]="cat">{{ cat }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <label class="text-sm text-bella-700 block mb-1">Estoque</label>
+            <input formControlName="stock_quantity" type="number" class="input-field" />
+          </div>
+        </div>
+
+        <div>
+          <label class="text-sm text-bella-700 block mb-1">URL da imagem</label>
+          <input formControlName="image_url" type="text" class="input-field" />
+        </div>
+
+        <div class="flex gap-6">
+          <label class="flex items-center gap-2 text-sm text-bella-700">
+            <input formControlName="is_new" type="checkbox" /> Novo
+          </label>
+          <label class="flex items-center gap-2 text-sm text-bella-700">
+            <input formControlName="is_promo" type="checkbox" /> Promoção
+          </label>
+        </div>
+
+        <div class="flex gap-4 pt-4">
+          <button type="button" (click)="closeModal()" class="btn-outline flex-1">Cancelar</button>
+          <button type="submit" [disabled]="saving" class="btn-primary flex-1">
+            {{ saving ? 'Salvando...' : 'Salvar' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

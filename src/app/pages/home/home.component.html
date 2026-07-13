@@ -1,0 +1,119 @@
+<!-- Hero carousel -->
+<section class="relative h-[85vh] min-h-[560px] overflow-hidden bg-bella-900">
+  @for (slide of heroSlides; track slide.image; let i = $index) {
+    <img
+      [src]="slide.image"
+      [alt]="slide.title"
+      class="absolute inset-0 w-full h-full object-cover opacity-70 transition-opacity duration-1000"
+      [class.opacity-70]="currentSlide() === i"
+      [class.opacity-0]="currentSlide() !== i"
+    />
+  }
+
+  <div class="absolute inset-0 bg-gradient-to-t from-bella-900/80 via-bella-900/20 to-transparent"></div>
+
+  <div class="relative h-full container-page flex flex-col justify-end pb-24">
+    @for (slide of heroSlides; track slide.image; let i = $index) {
+      @if (currentSlide() === i) {
+        <div>
+          <p class="text-white/80 text-sm tracking-[0.3em] uppercase mb-4">{{ slide.eyebrow }}</p>
+          <h1 class="font-serif text-white text-5xl md:text-6xl max-w-xl leading-tight">{{ slide.title }}</h1>
+          <a routerLink="/catalogo" class="mt-8 inline-block w-fit bg-white text-bella-900 px-8 py-3 text-sm uppercase tracking-wide hover:bg-[var(--clay)] hover:text-white transition">
+            {{ slide.ctaLabel }}
+          </a>
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Arrows -->
+  <button
+    (click)="prevSlide()"
+    aria-label="Slide anterior"
+    class="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/30 transition backdrop-blur-sm"
+  >
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <button
+    (click)="nextSlide()"
+    aria-label="Próximo slide"
+    class="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/30 transition backdrop-blur-sm"
+  >
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+
+  <!-- Dots -->
+  <div class="absolute bottom-8 right-8 flex gap-2">
+    @for (slide of heroSlides; track slide.image; let i = $index) {
+      <button
+        (click)="goToSlide(i)"
+        [attr.aria-label]="'Ir para slide ' + (i + 1)"
+        [class]="currentSlide() === i ? 'h-1.5 rounded-full transition-all w-8 bg-white' : 'h-1.5 rounded-full transition-all w-1.5 bg-white/40'"
+      ></button>
+    }
+  </div>
+</section>
+
+<!-- Categorias -->
+<section class="container-page py-20">
+  <h2 class="font-serif text-3xl text-bella-900 mb-10 text-center">Compre por categoria</h2>
+  <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+    @for (cat of categories; track cat.name) {
+      <a [routerLink]="['/catalogo']" [queryParams]="{ categoria: cat.name }" class="group relative aspect-[3/4] overflow-hidden block">
+        <img [src]="cat.image" [alt]="cat.name" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" />
+        <div class="absolute inset-0 bg-bella-900/30 group-hover:bg-bella-900/50 transition"></div>
+        <span class="absolute bottom-4 left-4 text-white font-serif text-lg">{{ cat.name }}</span>
+      </a>
+    }
+  </div>
+</section>
+
+<!-- Novidades -->
+<section class="container-page py-16">
+  <div class="flex items-center justify-between mb-10">
+    <h2 class="font-serif text-3xl text-bella-900">Novidades</h2>
+    <a [routerLink]="['/catalogo']" class="text-sm text-bella-500 hover:text-bella-900 uppercase tracking-wide">Ver tudo</a>
+  </div>
+
+  @if (loadingNew()) {
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      @for (i of [1,2,3,4]; track i) {
+        <div class="aspect-[3/4] bg-bella-200 animate-pulse"></div>
+      }
+    </div>
+  } @else if (newProducts().length === 0) {
+    <p class="text-bella-500 text-sm">Nenhum produto novo no momento.</p>
+  } @else {
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      @for (product of newProducts(); track product.id) {
+        <app-product-card [product]="product" (addToCart)="addToCart($event)" />
+      }
+    </div>
+  }
+</section>
+
+<!-- Promoções -->
+<section class="bg-white py-16 border-y border-bella-200">
+  <div class="container-page">
+    <div class="flex items-center justify-between mb-10">
+      <h2 class="font-serif text-3xl text-bella-900">Em promoção</h2>
+      <a [routerLink]="['/catalogo']" class="text-sm text-bella-500 hover:text-bella-900 uppercase tracking-wide">Ver tudo</a>
+    </div>
+
+    @if (loadingPromo()) {
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        @for (i of [1,2,3,4]; track i) {
+          <div class="aspect-[3/4] bg-bella-200 animate-pulse"></div>
+        }
+      </div>
+    } @else if (promoProducts().length === 0) {
+      <p class="text-bella-500 text-sm">Nenhuma promoção ativa no momento.</p>
+    } @else {
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        @for (product of promoProducts(); track product.id) {
+          <app-product-card [product]="product" (addToCart)="addToCart($event)" />
+        }
+      </div>
+    }
+  </div>
+</section>

@@ -1,0 +1,33 @@
+<footer class="border-t border-bella-200 mt-24 bg-white">
+  <div class="container-page py-14 grid grid-cols-1 md:grid-cols-4 gap-10">
+    <div>
+      <p class="font-serif text-xl text-bella-900 mb-3">Bella Fashion</p>
+      <p class="text-sm text-bella-500 leading-relaxed">Peças atemporais, feitas para durar. Moda com elegância, do closet à vida real.</p>
+    </div>
+    <div>
+      <p class="text-sm font-medium text-bella-900 mb-3 uppercase tracking-wide">Comprar</p>
+      <ul class="space-y-2 text-sm text-bella-500">
+        <li><a [routerLink]="['/catalogo']" [queryParams]="{ categoria: 'Vestidos' }" class="hover:text-bella-900">Vestidos</a></li>
+        <li><a [routerLink]="['/catalogo']" [queryParams]="{ categoria: 'Camisas' }" class="hover:text-bella-900">Camisas</a></li>
+        <li><a [routerLink]="['/catalogo']" [queryParams]="{ categoria: 'Tênis' }" class="hover:text-bella-900">Tênis</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="text-sm font-medium text-bella-900 mb-3 uppercase tracking-wide">Conta</p>
+      <ul class="space-y-2 text-sm text-bella-500">
+        <li><a routerLink="/pedidos" class="hover:text-bella-900">Meus pedidos</a></li>
+        <li><a routerLink="/login" class="hover:text-bella-900">Entrar</a></li>
+        <li><a routerLink="/register" class="hover:text-bella-900">Criar conta</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="text-sm font-medium text-bella-900 mb-3 uppercase tracking-wide">Institucional</p>
+      <ul class="space-y-2 text-sm text-bella-500">
+        <li><a routerLink="/privacidade" class="hover:text-bella-900">Política de privacidade</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-bella-200 py-6 text-center text-xs text-bella-500">
+    © {{ year }} Bella Fashion. Todos os direitos reservados.
+  </div>
+</footer>

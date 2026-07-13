@@ -1,0 +1,34 @@
+<div class="container-page py-24 max-w-md">
+  <h1 class="font-serif text-3xl text-bella-900 mb-2 text-center">Bem-vinda de volta</h1>
+  <p class="text-bella-500 text-sm text-center mb-10">Entre para acompanhar seus pedidos e favoritos.</p>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5">
+    <div>
+      <label class="text-sm text-bella-700 block mb-1">E-mail</label>
+      <input formControlName="email" type="email" class="input-field" />
+      @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+        <p class="text-red-700 text-xs mt-1">Informe um e-mail válido.</p>
+      }
+    </div>
+
+    <div>
+      <label class="text-sm text-bella-700 block mb-1">Senha</label>
+      <input formControlName="password" type="password" class="input-field" />
+      @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+        <p class="text-red-700 text-xs mt-1">Informe sua senha.</p>
+      }
+    </div>
+
+    @if (error) {
+      <p class="text-red-700 text-sm">{{ error }}</p>
+    }
+
+    <button type="submit" [disabled]="submitting" class="btn-primary w-full">
+      {{ submitting ? 'Entrando...' : 'Entrar' }}
+    </button>
+  </form>
+
+  <p class="text-center text-sm text-bella-500 mt-8">
+    Não tem uma conta? <a routerLink="/register" class="text-bella-900 underline">Criar conta</a>
+  </p>
+</div>

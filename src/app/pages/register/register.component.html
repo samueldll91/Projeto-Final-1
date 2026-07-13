@@ -1,0 +1,81 @@
+<div class="container-page py-24 max-w-md">
+  @if (step() === 'form') {
+    <h1 class="font-serif text-3xl text-bella-900 mb-2 text-center">Criar conta</h1>
+    <p class="text-bella-500 text-sm text-center mb-10">Junte-se à Bella Fashion.</p>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-5">
+      <div>
+        <label class="text-sm text-bella-700 block mb-1">E-mail</label>
+        <input formControlName="email" type="email" class="input-field" />
+        @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+          <p class="text-red-700 text-xs mt-1">Informe um e-mail válido.</p>
+        }
+      </div>
+
+      <div>
+        <label class="text-sm text-bella-700 block mb-1">Senha</label>
+        <input formControlName="password" type="password" class="input-field" />
+        @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+          <p class="text-red-700 text-xs mt-1">Mínimo de 6 caracteres.</p>
+        }
+      </div>
+
+      <div>
+        <label class="text-sm text-bella-700 block mb-1">Confirmar senha</label>
+        <input formControlName="confirmPassword" type="password" class="input-field" />
+        @if (registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched) {
+          <p class="text-red-700 text-xs mt-1">As senhas não coincidem.</p>
+        }
+      </div>
+
+      <label class="flex items-start gap-3 text-sm text-bella-700">
+        <input formControlName="lgpdConsent" type="checkbox" class="mt-1" />
+        <span>
+          Concordo com o tratamento dos meus dados pessoais conforme a
+          <a routerLink="/privacidade" class="text-bella-900 underline">Política de Privacidade</a>, em conformidade com a LGPD.
+        </span>
+      </label>
+      @if (registerForm.get('lgpdConsent')?.invalid && registerForm.get('lgpdConsent')?.touched) {
+        <p class="text-red-700 text-xs -mt-3">É necessário aceitar a política de privacidade.</p>
+      }
+
+      @if (error) {
+        <p class="text-red-700 text-sm">{{ error }}</p>
+      }
+
+      <button type="submit" [disabled]="submitting" class="btn-primary w-full">
+        {{ submitting ? 'Criando conta...' : 'Criar conta' }}
+      </button>
+    </form>
+
+    <p class="text-center text-sm text-bella-500 mt-8">
+      Já tem uma conta? <a routerLink="/login" class="text-bella-900 underline">Entrar</a>
+    </p>
+  } @else {
+    <h1 class="font-serif text-3xl text-bella-900 mb-2 text-center">Confirme seu e-mail</h1>
+    <p class="text-bella-500 text-sm text-center mb-10">
+      Enviamos um código de 6 dígitos para {{ registerForm.get('email')?.value }}.
+    </p>
+
+    <div class="flex justify-center gap-2 mb-8">
+      @for (digit of otpDigits; track $index) {
+        <input
+          type="text"
+          inputmode="numeric"
+          maxlength="1"
+          [value]="digit"
+          (input)="onOtpInput($index, $event)"
+          class="w-12 h-14 text-center text-xl border border-bella-200 focus:border-[var(--clay)] outline-none rounded-sm"
+        />
+      }
+    </div>
+
+    @if (error) {
+      <p class="text-red-700 text-sm text-center mb-4">{{ error }}</p>
+    }
+
+    <button (click)="verifyOtp()" [disabled]="submitting" class="btn-primary w-full">
+      {{ submitting ? 'Verificando...' : 'Verificar código' }}
+    </button>
+  }
+</div>

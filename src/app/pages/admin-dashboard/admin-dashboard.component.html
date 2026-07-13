@@ -1,0 +1,79 @@
+<div class="container-page py-12">
+  <div class="flex items-center justify-between mb-10">
+    <h1 class="font-serif text-4xl text-bella-900">Painel administrativo</h1>
+    <a routerLink="/admin/produtos" class="btn-outline">Gerenciar produtos</a>
+  </div>
+
+  @if (loading()) {
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      @for (i of [1,2,3,4]; track i) {
+        <div class="h-28 bg-bella-200 animate-pulse"></div>
+      }
+    </div>
+  } @else {
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-14">
+      <div class="border border-bella-200 bg-white p-6">
+        <p class="text-xs uppercase tracking-wide text-bella-500 mb-2">Receita total</p>
+        <p class="font-serif text-2xl text-bella-900">{{ stats().revenue | currency:'BRL' }}</p>
+      </div>
+      <div class="border border-bella-200 bg-white p-6">
+        <p class="text-xs uppercase tracking-wide text-bella-500 mb-2">Pedidos</p>
+        <p class="font-serif text-2xl text-bella-900">{{ stats().orders }}</p>
+      </div>
+      <div class="border border-bella-200 bg-white p-6">
+        <p class="text-xs uppercase tracking-wide text-bella-500 mb-2">Produtos</p>
+        <p class="font-serif text-2xl text-bella-900">{{ stats().products }}</p>
+      </div>
+      <div class="border border-bella-200 bg-white p-6">
+        <p class="text-xs uppercase tracking-wide text-bella-500 mb-2">Clientes</p>
+        <p class="font-serif text-2xl text-bella-900">{{ stats().customers }}</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+      <div>
+        <h2 class="font-serif text-xl text-bella-900 mb-4">Pedidos recentes</h2>
+        @if (recentOrders().length === 0) {
+          <p class="text-bella-500 text-sm">Nenhum pedido ainda.</p>
+        } @else {
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left text-bella-500 border-b border-bella-200">
+                <th class="py-2 font-normal">Cliente</th>
+                <th class="py-2 font-normal">Data</th>
+                <th class="py-2 font-normal">Status</th>
+                <th class="py-2 font-normal text-right">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (order of recentOrders(); track order.id) {
+                <tr class="border-b border-bella-200">
+                  <td class="py-3">{{ order.customer_name }}</td>
+                  <td class="py-3">{{ order.created_at | date:'dd/MM/yyyy' }}</td>
+                  <td class="py-3 capitalize">{{ order.status }}</td>
+                  <td class="py-3 text-right">{{ order.total | currency:'BRL' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+
+      <div>
+        <h2 class="font-serif text-xl text-bella-900 mb-4">Estoque baixo</h2>
+        @if (lowStock().length === 0) {
+          <p class="text-bella-500 text-sm">Todos os produtos com estoque saudável.</p>
+        } @else {
+          <ul class="divide-y divide-bella-200">
+            @for (product of lowStock(); track product.id) {
+              <li class="py-3 flex justify-between text-sm">
+                <span>{{ product.name }}</span>
+                <span class="text-red-700">{{ product.stock_quantity }} un.</span>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,33 @@
+<div class="container-page py-12">
+  <h1 class="font-serif text-4xl text-bella-900 mb-10">Meus pedidos</h1>
+
+  @if (loading()) {
+    <div class="space-y-4">
+      @for (i of [1,2,3]; track i) {
+        <div class="h-24 bg-bella-200 animate-pulse"></div>
+      }
+    </div>
+  } @else if (orders().length === 0) {
+    <div class="text-center py-24">
+      <p class="text-bella-500 mb-6">Você ainda não fez nenhum pedido.</p>
+      <a routerLink="/catalogo" class="btn-outline">Começar a comprar</a>
+    </div>
+  } @else {
+    <div class="divide-y divide-bella-200 border-t border-b border-bella-200">
+      @for (order of orders(); track order.id) {
+        <div class="py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <p class="text-sm text-bella-500">Pedido #{{ order.id }} · {{ order.created_at | date:'dd/MM/yyyy' }}</p>
+            <p class="font-serif text-lg text-bella-900 mt-1">{{ order.items.length }} item(ns)</p>
+          </div>
+          <div class="flex items-center gap-6">
+            <span class="text-xs uppercase tracking-wide px-3 py-1 border border-bella-200">
+              {{ statusLabels[order.status] }}
+            </span>
+            <span class="text-bella-900 font-medium">{{ order.total | currency:'BRL' }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

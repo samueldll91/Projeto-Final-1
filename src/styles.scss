@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #FAF8F5;
+  --stone-900: #1c1917;
+  --stone-700: #44403c;
+  --stone-500: #78716c;
+  --stone-200: #e7e5e4;
+  --clay: #C08552;
+  --clay-dark: #A66A3C;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--stone-900);
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Playfair Display', serif;
+}
+
+::selection {
+  background: var(--clay);
+  color: #fff;
+}
+
+/* focus states for accessibility */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--clay);
+  outline-offset: 2px;
+}
+
+.container-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.btn-primary {
+  @apply bg-bella-900 text-white px-6 py-3 rounded-sm tracking-wide text-sm uppercase transition hover:bg-[var(--clay-dark)] disabled:opacity-40 disabled:cursor-not-allowed;
+}
+
+.btn-outline {
+  @apply border border-bella-900 text-bella-900 px-6 py-3 rounded-sm tracking-wide text-sm uppercase transition hover:bg-bella-900 hover:text-white;
+}
+
+.input-field {
+  @apply w-full border border-bella-200 bg-white px-4 py-3 text-sm focus:border-[var(--clay)] outline-none rounded-sm;
+}

@@ -1,0 +1,43 @@
+<a [routerLink]="['/produto', product.id]" class="group block">
+  <div class="relative aspect-[3/4] overflow-hidden bg-bella-200">
+    @if (product.image_url) {
+      <img [src]="product.image_url" [alt]="product.name" class="w-full h-full object-cover transition duration-500 group-hover:scale-105" />
+    } @else {
+      <div class="w-full h-full flex items-center justify-center text-bella-500 text-sm">Sem imagem</div>
+    }
+
+    <div class="absolute top-3 left-3 flex flex-col gap-2">
+      @if (product.is_new) {
+        <span class="bg-bella-900 text-white text-[10px] tracking-wider uppercase px-2 py-1">Novo</span>
+      }
+      @if (product.is_promo) {
+        <span class="bg-[var(--clay)] text-white text-[10px] tracking-wider uppercase px-2 py-1">Promoção</span>
+      }
+    </div>
+
+    @if (product.stock_quantity <= 0) {
+      <div class="absolute inset-0 bg-white/70 flex items-center justify-center">
+        <span class="text-xs tracking-wide uppercase text-bella-900">Esgotado</span>
+      </div>
+    }
+
+    <button
+      (click)="onAdd($event)"
+      [disabled]="product.stock_quantity <= 0"
+      class="absolute bottom-0 left-0 right-0 bg-bella-900 text-white text-xs tracking-wide uppercase py-3 translate-y-full group-hover:translate-y-0 transition disabled:opacity-40"
+    >
+      Adicionar ao carrinho
+    </button>
+  </div>
+
+  <div class="mt-3">
+    <p class="text-xs uppercase tracking-wide text-bella-500">{{ product.category }}</p>
+    <h3 class="font-serif text-base text-bella-900 mt-1">{{ product.name }}</h3>
+    <div class="mt-1 flex items-center gap-2">
+      <span class="text-sm text-bella-900">{{ product.price | currency:'BRL' }}</span>
+      @if (product.original_price && product.original_price > product.price) {
+        <span class="text-xs text-bella-500 line-through">{{ product.original_price | currency:'BRL' }}</span>
+      }
+    </div>
+  </div>
+</a>

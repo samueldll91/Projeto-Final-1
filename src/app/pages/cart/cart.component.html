@@ -1,0 +1,128 @@
+<div class="container-page py-12">
+  <h1 class="font-serif text-4xl text-bella-900 mb-10">Carrinho</h1>
+
+  @if (cartService.cartItems().length === 0) {
+    <div class="text-center py-24">
+      <p class="text-bella-500 mb-6">Seu carrinho está vazio.</p>
+      <a routerLink="/catalogo" class="btn-outline">Continuar comprando</a>
+    </div>
+  } @else if (!checkoutMode) {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <div class="lg:col-span-2 divide-y divide-bella-200 border-t border-b border-bella-200">
+        @for (item of cartService.cartItems(); track item.product_id) {
+          <div class="flex gap-4 py-6">
+            <div class="w-24 h-32 bg-bella-200 overflow-hidden shrink-0">
+              @if (item.image_url) {
+                <img [src]="item.image_url" [alt]="item.name" class="w-full h-full object-cover" />
+              }
+            </div>
+            <div class="flex-1 flex flex-col justify-between">
+              <div class="flex justify-between">
+                <h3 class="font-serif text-lg text-bella-900">{{ item.name }}</h3>
+                <button (click)="removeItem(item.product_id)" class="text-bella-500 hover:text-red-700 text-sm">Remover</button>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center border border-bella-200">
+                  <button (click)="updateQuantity(item.product_id, item.quantity - 1)" class="w-8 h-8 text-bella-900 hover:bg-bella-bg">−</button>
+                  <span class="w-8 text-center text-sm">{{ item.quantity }}</span>
+                  <button (click)="updateQuantity(item.product_id, item.quantity + 1)" class="w-8 h-8 text-bella-900 hover:bg-bella-bg">+</button>
+                </div>
+                <span class="text-bella-900">{{ item.price * item.quantity | currency:'BRL' }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="border border-bella-200 p-6 h-fit">
+        <h2 class="font-serif text-xl text-bella-900 mb-6">Resumo</h2>
+        <div class="flex justify-between text-sm text-bella-500 mb-2">
+          <span>Subtotal</span>
+          <span>{{ cartService.total() | currency:'BRL' }}</span>
+        </div>
+        <div class="flex justify-between text-sm text-bella-500 mb-6">
+          <span>Frete</span>
+          <span>Calculado no próximo passo</span>
+        </div>
+        <div class="flex justify-between text-base text-bella-900 font-medium border-t border-bella-200 pt-4 mb-6">
+          <span>Total</span>
+          <span>{{ cartService.total() | currency:'BRL' }}</span>
+        </div>
+        <button (click)="goToCheckout()" class="btn-primary w-full">Finalizar compra</button>
+      </div>
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" class="lg:col-span-2 space-y-5">
+        <h2 class="font-serif text-xl text-bella-900 mb-2">Dados de entrega</h2>
+
+        <div>
+          <label class="text-sm text-bella-700 block mb-1">Nome completo</label>
+          <input formControlName="customer_name" type="text" class="input-field" />
+          @if (checkoutForm.get('customer_name')?.invalid && checkoutForm.get('customer_name')?.touched) {
+            <p class="text-red-700 text-xs mt-1">Informe seu nome completo.</p>
+          }
+        </div>
+
+        <div>
+          <label class="text-sm text-bella-700 block mb-1">E-mail</label>
+          <input formControlName="customer_email" type="email" class="input-field" />
+          @if (checkoutForm.get('customer_email')?.invalid && checkoutForm.get('customer_email')?.touched) {
+            <p class="text-red-700 text-xs mt-1">Informe um e-mail válido.</p>
+          }
+        </div>
+
+        <div>
+          <label class="text-sm text-bella-700 block mb-1">Endereço de entrega</label>
+          <textarea formControlName="shipping_address" rows="3" class="input-field"></textarea>
+          @if (checkoutForm.get('shipping_address')?.invalid && checkoutForm.get('shipping_address')?.touched) {
+            <p class="text-red-700 text-xs mt-1">Informe o endereço de entrega.</p>
+          }
+        </div>
+
+        <div>
+          <label class="text-sm text-bella-700 block mb-2">Forma de pagamento</label>
+          <div class="grid grid-cols-3 gap-3">
+            <label class="border border-bella-200 px-4 py-3 text-sm text-center cursor-pointer has-[:checked]:border-bella-900 has-[:checked]:bg-bella-bg">
+              <input type="radio" formControlName="payment_method" value="pix" class="sr-only" />
+              Pix
+            </label>
+            <label class="border border-bella-200 px-4 py-3 text-sm text-center cursor-pointer has-[:checked]:border-bella-900 has-[:checked]:bg-bella-bg">
+              <input type="radio" formControlName="payment_method" value="credit_card" class="sr-only" />
+              Cartão
+            </label>
+            <label class="border border-bella-200 px-4 py-3 text-sm text-center cursor-pointer has-[:checked]:border-bella-900 has-[:checked]:bg-bella-bg">
+              <input type="radio" formControlName="payment_method" value="boleto" class="sr-only" />
+              Boleto
+            </label>
+          </div>
+        </div>
+
+        @if (error) {
+          <p class="text-red-700 text-sm">{{ error }}</p>
+        }
+
+        <div class="flex gap-4 pt-4">
+          <button type="button" (click)="checkoutMode = false" class="btn-outline">Voltar</button>
+          <button type="submit" [disabled]="submitting" class="btn-primary flex-1">
+            {{ submitting ? 'Enviando...' : 'Confirmar pedido' }}
+          </button>
+        </div>
+      </form>
+
+      <div class="border border-bella-200 p-6 h-fit">
+        <h2 class="font-serif text-xl text-bella-900 mb-6">Resumo</h2>
+        @for (item of cartService.cartItems(); track item.product_id) {
+          <div class="flex justify-between text-sm text-bella-700 mb-2">
+            <span>{{ item.quantity }}x {{ item.name }}</span>
+            <span>{{ item.price * item.quantity | currency:'BRL' }}</span>
+          </div>
+        }
+        <div class="flex justify-between text-base text-bella-900 font-medium border-t border-bella-200 pt-4 mt-4">
+          <span>Total</span>
+          <span>{{ cartService.total() | currency:'BRL' }}</span>
+        </div>
+      </div>
+    </div>
+  }
+</div>
