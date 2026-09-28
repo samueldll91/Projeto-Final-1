@@ -24,12 +24,7 @@ Este projeto inclui um **mock de API embutido** (`src/app/core/mocks/mock-api.in
 intercepta todas as chamadas a `/api/...` e responde com dados de exemplo em memória — assim dá pra
 testar a loja inteira (catálogo, carrinho, checkout, login, painel admin) sem precisar de um backend real.
 
-Contas de demonstração:
 
-| Papel | E-mail | Senha |
-|---|---|---|
-| Administradora | `admin@bellafashion.com.br` | `admin123` |
-| Cliente | `cliente@exemplo.com` | `123456` |
 
 Para cadastro novo (`/register`), qualquer código de 6 dígitos é aceito na etapa de OTP.
 
